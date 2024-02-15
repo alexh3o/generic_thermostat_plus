@@ -12,12 +12,14 @@ import voluptuous as vol
 from homeassistant.components.climate import (
     ATTR_PRESET_MODE,
     PLATFORM_SCHEMA,
-    PRESET_ACTIVITY,
-    PRESET_AWAY,
-    PRESET_COMFORT,
-    PRESET_HOME,
     PRESET_NONE,
+    PRESET_AWAY,
+    PRESET_ECO,
     PRESET_SLEEP,
+    PRESET_ACTIVITY,
+    PRESET_HOME,
+    PRESET_COMFORT,
+    PRESET_BOOST,
     ClimateEntity,
     ClimateEntityFeature,
     HVACAction,
@@ -85,10 +87,12 @@ CONF_PRESETS = {
     p: f"{p}_temp"
     for p in (
         PRESET_AWAY,
-        PRESET_COMFORT,
-        PRESET_HOME,
+        PRESET_ECO,
         PRESET_SLEEP,
         PRESET_ACTIVITY,
+        PRESET_HOME,
+        PRESET_COMFORT,
+        PRESET_BOOST,
     )
 }
 
