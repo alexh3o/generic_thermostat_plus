@@ -9,6 +9,7 @@ from typing import Any
 
 import voluptuous as vol
 
+# Rajout des modes ECO et BOOST
 from homeassistant.components.climate import (
     ATTR_PRESET_MODE,
     PLATFORM_SCHEMA,
@@ -83,6 +84,7 @@ CONF_INITIAL_HVAC_MODE = "initial_hvac_mode"
 CONF_PRECISION = "precision"
 CONF_TEMP_STEP = "target_temp_step"
 
+# Rajout des modes ECO et BOOST
 CONF_PRESETS = {
     p: f"{p}_temp"
     for p in (
@@ -104,6 +106,13 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Optional(CONF_MAX_TEMP): vol.Coerce(float),
         vol.Optional(CONF_MIN_DUR): cv.positive_time_period,
         vol.Optional(CONF_MIN_TEMP): vol.Coerce(float),
+        vol.Optional(const.CONF_AWAY_TEMP): vol.Coerce(float),
+        vol.Optional(const.CONF_ECO_TEMP): vol.Coerce(float),
+        vol.Optional(const.CONF_BOOST_TEMP): vol.Coerce(float),
+        vol.Optional(const.CONF_COMFORT_TEMP): vol.Coerce(float),
+        vol.Optional(const.CONF_HOME_TEMP): vol.Coerce(float),
+        vol.Optional(const.CONF_SLEEP_TEMP): vol.Coerce(float),
+        vol.Optional(const.CONF_ACTIVITY_TEMP): vol.Coerce(float),
         vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
         vol.Optional(CONF_COLD_TOLERANCE, default=DEFAULT_TOLERANCE): vol.Coerce(float),
         vol.Optional(CONF_HOT_TOLERANCE, default=DEFAULT_TOLERANCE): vol.Coerce(float),
@@ -177,6 +186,20 @@ async def async_setup_platform(
         ]
     )
 
+    # Rajout du service de reglage des temepratures de presets
+    platform.async_register_entity_service(  # type: ignore
+        "set_preset_temp",
+        {
+            vol.Optional("away_temp"): vol.Coerce(float),
+            vol.Optional("eco_temp"): vol.Coerce(float),
+            vol.Optional("sleep_temp"): vol.Coerce(float),
+            vol.Optional("activity_temp"): vol.Coerce(float),
+            vol.Optional("home_temp"): vol.Coerce(float),
+            vol.Optional("comfort_temp"): vol.Coerce(float),
+            vol.Optional("boost_temp"): vol.Coerce(float),
+        },
+        "async_set_preset_temp",
+    )
 
 class GenericThermostat(ClimateEntity, RestoreEntity):
     """Representation of a Generic Thermostat device."""
@@ -241,7 +264,15 @@ class GenericThermostat(ClimateEntity, RestoreEntity):
         else:
             self._attr_preset_modes = [PRESET_NONE]
         self._presets = presets
-
+        # Rajout des temepratures de presets
+        self._away_temp = kwargs.get('away_temp')
+        self._eco_temp = kwargs.get('eco_temp')
+        self._sleep_temp = kwargs.get('sleep_temp')
+        self._activity_temp = kwargs.get('activity_temp')
+        self._home_temp = kwargs.get('home_temp')
+        self._comfort_temp = kwargs.get('comfort_temp')
+        self._boost_temp = kwargs.get('boost_temp')
+        
     async def async_added_to_hass(self) -> None:
         """Run when entity about to be added."""
         await super().async_added_to_hass()
@@ -341,6 +372,21 @@ class GenericThermostat(ClimateEntity, RestoreEntity):
         # if a target_temperature_step is not defined, fallback to equal the precision
         return self.precision
 
+    # Rajout des attributs de temperatures des presets
+    @property
+    def extra_state_attributes(self):
+        """attributes to include in entity"""
+        device_state_attributes = {
+            'away_temp': self._away_temp,
+            'eco_temp': self._eco_temp,
+            'sleep_temp': self._sleep_temp,
+            'activity_temp': self._activity_temp,
+            'home_temp': self._home_temp,
+            'comfort_temp': self._comfort_temp,
+            'boost_temp': self._boost_temp,
+        }
+        return device_state_attributes
+    
     @property
     def current_temperature(self) -> float | None:
         """Return the sensor temperature."""
@@ -396,6 +442,32 @@ class GenericThermostat(ClimateEntity, RestoreEntity):
         await self._async_control_heating(force=True)
         self.async_write_ha_state()
 
+    # Rajout de la fonction maj temperatures presets
+    async def async_set_preset_temp(self, **kwargs):
+        """Set the presets modes temperatures."""
+        away_temp = kwargs.get('away_temp', None)
+        eco_temp = kwargs.get('eco_temp', None)
+        boost_temp = kwargs.get('boost_temp', None)
+        comfort_temp = kwargs.get('comfort_temp', None)
+        home_temp = kwargs.get('home_temp', None)
+        sleep_temp = kwargs.get('sleep_temp', None)
+        activity_temp = kwargs.get('activity_temp', None)
+        if away_temp is not None:
+            self._away_temp = max(min(float(away_temp), self.max_temp), self.min_temp)
+        if eco_temp is not None:
+            self._eco_temp = max(min(float(eco_temp), self.max_temp), self.min_temp)
+        if boost_temp is not None:
+            self._boost_temp = max(min(float(boost_temp), self.max_temp), self.min_temp)
+        if comfort_temp is not None:
+            self._comfort_temp = max(min(float(comfort_temp), self.max_temp), self.min_temp)
+        if home_temp is not None:
+            self._home_temp = max(min(float(home_temp), self.max_temp), self.min_temp)
+        if sleep_temp is not None:
+            self._sleep_temp = max(min(float(sleep_temp), self.max_temp), self.min_temp)
+        if activity_temp is not None:
+            self._activity_temp = max(min(float(activity_temp), self.max_temp), self.min_temp)
+        await self._async_control_heating(calc_pid=True)
+    
     @property
     def min_temp(self) -> float:
         """Return the minimum temperature."""
