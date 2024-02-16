@@ -1,3 +1,5 @@
+DEFAULT_TOLERANCE = 0.3
+DEFAULT_NAME = "Generic Thermostat"
 CONF_AWAY_TEMP = "away_temp"
 CONF_ECO_TEMP = "eco_temp"
 CONF_BOOST_TEMP = "boost_temp"
@@ -18,3 +20,15 @@ CONF_KEEP_ALIVE = "keep_alive"
 CONF_INITIAL_HVAC_MODE = "initial_hvac_mode"
 CONF_PRECISION = "precision"
 CONF_TEMP_STEP = "target_temp_step"
+CONF_PRESETS = {
+    p: f"{p}_temp"
+    for p in (
+        PRESET_AWAY,
+        PRESET_ECO,
+        PRESET_SLEEP,
+        PRESET_ACTIVITY,
+        PRESET_HOME,
+        PRESET_COMFORT,
+        PRESET_BOOST,
+    )
+}
