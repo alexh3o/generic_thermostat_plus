@@ -162,6 +162,13 @@ async def async_setup_platform(
     target_temperature_step: float | None = config.get(CONF_TEMP_STEP)
     unit = hass.config.units.temperature_unit
     unique_id: str | None = config.get(CONF_UNIQUE_ID)
+    away_temp: config.get(const.CONF_AWAY_TEMP),
+    eco_tem': config.get(const.CONF_ECO_TEMP),
+    boost_temp: config.get(const.CONF_BOOST_TEMP),
+    comfort_temp: config.get(const.CONF_COMFORT_TEMP),
+    home_temp: config.get(const.CONF_HOME_TEMP),
+    sleep_temp: config.get(const.CONF_SLEEP_TEMP),
+    activity_temp: config.get(const.CONF_ACTIVITY_TEMP),
 
     async_add_entities(
         [
@@ -183,6 +190,13 @@ async def async_setup_platform(
                 target_temperature_step,
                 unit,
                 unique_id,
+                away_temp,
+                eco_temp,
+                boost_temp,
+                comfort_temp,
+                home_temp,
+                sleep_temp,
+                activity_temp,
             )
         ]
     )
@@ -373,6 +387,44 @@ class GenericThermostat(ClimateEntity, RestoreEntity):
         # if a target_temperature_step is not defined, fallback to equal the precision
         return self.precision
 
+    # Rajout
+    @property
+    def preset_modes(self):
+        """Return a list of available preset modes."""
+        preset_modes = [PRESET_NONE]
+        for mode, preset_mode_temp in self._preset_modes_temp.items():
+            if preset_mode_temp is not None:
+                preset_modes.append(mode)
+        return preset_modes
+        
+    # Rajout
+    @property
+    def _preset_modes_temp(self):
+        """Return a list of preset modes and their temperatures"""
+        return {
+            PRESET_AWAY: self._away_temp,
+            PRESET_ECO: self._eco_temp,
+            PRESET_BOOST: self._boost_temp,
+            PRESET_COMFORT: self._comfort_temp,
+            PRESET_HOME: self._home_temp,
+            PRESET_SLEEP: self._sleep_temp,
+            PRESET_ACTIVITY: self._activity_temp,
+        }
+
+    # Rajout
+    @property
+    def _preset_temp_modes(self):
+        """Return a list of preset temperature and their modes"""
+        return {
+            self._away_temp: PRESET_AWAY,
+            self._eco_temp: PRESET_ECO,
+            self._boost_temp: PRESET_BOOST,
+            self._comfort_temp: PRESET_COMFORT,
+            self._home_temp: PRESET_HOME,
+            self._sleep_temp: PRESET_SLEEP,
+            self._activity_temp: PRESET_ACTIVITY,
+        }
+    
     # Rajout des attributs de temperatures des presets
     @property
     def extra_state_attributes(self):
@@ -387,6 +439,16 @@ class GenericThermostat(ClimateEntity, RestoreEntity):
             'boost_temp': self._boost_temp,
         }
         return device_state_attributes
+
+    # Rajout
+    @property
+    def presets(self):
+        """Return a dict of available preset and temperatures."""
+        presets = {}
+        for mode, preset_mode_temp in self._preset_modes_temp.items():
+            if preset_mode_temp is not None:
+                presets.update({mode: preset_mode_temp})
+        return presets
     
     @property
     def current_temperature(self) -> float | None:
