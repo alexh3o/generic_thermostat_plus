@@ -1,0 +1,7 @@
+CONF_AWAY_TEMP = "away_temp"
+CONF_ECO_TEMP = "eco_temp"
+CONF_BOOST_TEMP = "boost_temp"
+CONF_COMFORT_TEMP = "comfort_temp"
+CONF_HOME_TEMP = "home_temp"
+CONF_SLEEP_TEMP = "sleep_temp"
+CONF_ACTIVITY_TEMP = "activity_temp"
