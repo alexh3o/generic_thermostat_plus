@@ -138,13 +138,13 @@ async def async_setup_platform(
     target_temperature_step: float | None = config.get(CONF_TEMP_STEP)
     unit = hass.config.units.temperature_unit
     unique_id: str | None = config.get(CONF_UNIQUE_ID)
-    away_temp: config.get(const.CONF_AWAY_TEMP),
-    eco_temp: config.get(const.CONF_ECO_TEMP),
-    boost_temp: config.get(const.CONF_BOOST_TEMP),
-    comfort_temp: config.get(const.CONF_COMFORT_TEMP),
-    home_temp: config.get(const.CONF_HOME_TEMP),
-    sleep_temp: config.get(const.CONF_SLEEP_TEMP),
-    activity_temp: config.get(const.CONF_ACTIVITY_TEMP),
+    away_temp: config.get(const.CONF_AWAY_TEMP)
+    eco_temp: config.get(const.CONF_ECO_TEMP)
+    boost_temp: config.get(const.CONF_BOOST_TEMP)
+    comfort_temp: config.get(const.CONF_COMFORT_TEMP)
+    home_temp: config.get(const.CONF_HOME_TEMP)
+    sleep_temp: config.get(const.CONF_SLEEP_TEMP)
+    activity_temp: config.get(const.CONF_ACTIVITY_TEMP)
 
     async_add_entities(
         [
