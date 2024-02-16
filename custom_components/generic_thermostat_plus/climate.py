@@ -64,6 +64,7 @@ from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType, EventType
 
 from . import DOMAIN, PLATFORMS
+from . import const
 
 _LOGGER = logging.getLogger(__name__)
 
