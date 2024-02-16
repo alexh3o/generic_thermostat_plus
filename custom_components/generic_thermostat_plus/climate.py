@@ -462,7 +462,7 @@ class GenericThermostat(ClimateEntity, RestoreEntity):
             self._sleep_temp = max(min(float(sleep_temp), self.max_temp), self.min_temp)
         if activity_temp is not None:
             self._activity_temp = max(min(float(activity_temp), self.max_temp), self.min_temp)
-        await self._async_control_heating(calc_pid=True)
+        await self._async_control_heating()
     
     @property
     def min_temp(self) -> float:
