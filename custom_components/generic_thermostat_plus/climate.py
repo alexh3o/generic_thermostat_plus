@@ -163,7 +163,7 @@ async def async_setup_platform(
     unit = hass.config.units.temperature_unit
     unique_id: str | None = config.get(CONF_UNIQUE_ID)
     away_temp: config.get(const.CONF_AWAY_TEMP),
-    eco_tem': config.get(const.CONF_ECO_TEMP),
+    eco_temp: config.get(const.CONF_ECO_TEMP),
     boost_temp: config.get(const.CONF_BOOST_TEMP),
     comfort_temp: config.get(const.CONF_COMFORT_TEMP),
     home_temp: config.get(const.CONF_HOME_TEMP),
@@ -367,7 +367,14 @@ class GenericThermostat(ClimateEntity, RestoreEntity):
             _LOGGER.warning(
                 "No previously saved temperature, setting to %s", self._target_temp
             )
-
+        
+        for preset_mode in ['away_temp', 'eco_temp', 'boost_temp', 'comfort_temp', 'home_temp',
+                            'sleep_temp', 'activity_temp']:
+            if old_state.attributes.get(preset_mode) is not None:
+                setattr(self, f"_{preset_mode}", float(old_state.attributes.get(preset_mode)))
+        if old_state.attributes.get(ATTR_PRESET_MODE) is not None:
+            self._attr_preset_mode = old_state.attributes.get(ATTR_PRESET_MODE)
+        
         # Set default state to off
         if not self._hvac_mode:
             self._hvac_mode = HVACMode.OFF
