@@ -75,45 +75,14 @@ from . import const
 
 _LOGGER = logging.getLogger(__name__)
 
-DEFAULT_TOLERANCE = 0.3
-DEFAULT_NAME = "Generic Thermostat"
-
-CONF_HEATER = "heater"
-CONF_SENSOR = "target_sensor"
-CONF_MIN_TEMP = "min_temp"
-CONF_MAX_TEMP = "max_temp"
-CONF_TARGET_TEMP = "target_temp"
-CONF_AC_MODE = "ac_mode"
-CONF_MIN_DUR = "min_cycle_duration"
-CONF_COLD_TOLERANCE = "cold_tolerance"
-CONF_HOT_TOLERANCE = "hot_tolerance"
-CONF_KEEP_ALIVE = "keep_alive"
-CONF_INITIAL_HVAC_MODE = "initial_hvac_mode"
-CONF_PRECISION = "precision"
-CONF_TEMP_STEP = "target_temp_step"
-
-# Rajout des modes ECO et BOOST
-CONF_PRESETS = {
-    p: f"{p}_temp"
-    for p in (
-        PRESET_AWAY,
-        PRESET_ECO,
-        PRESET_SLEEP,
-        PRESET_ACTIVITY,
-        PRESET_HOME,
-        PRESET_COMFORT,
-        PRESET_BOOST,
-    )
-}
-
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
-        vol.Required(CONF_HEATER): cv.entity_id,
-        vol.Required(CONF_SENSOR): cv.entity_id,
-        vol.Optional(CONF_AC_MODE): cv.boolean,
-        vol.Optional(CONF_MAX_TEMP): vol.Coerce(float),
-        vol.Optional(CONF_MIN_DUR): cv.positive_time_period,
-        vol.Optional(CONF_MIN_TEMP): vol.Coerce(float),
+        vol.Required(const.CONF_HEATER): cv.entity_id,
+        vol.Required(const.CONF_SENSOR): cv.entity_id,
+        vol.Optional(const.CONF_AC_MODE): cv.boolean,
+        vol.Optional(const.CONF_MAX_TEMP): vol.Coerce(float),
+        vol.Optional(const.CONF_MIN_DUR): cv.positive_time_period,
+        vol.Optional(const.CONF_MIN_TEMP): vol.Coerce(float),
         vol.Optional(const.CONF_AWAY_TEMP): vol.Coerce(float),
         vol.Optional(const.CONF_ECO_TEMP): vol.Coerce(float),
         vol.Optional(const.CONF_BOOST_TEMP): vol.Coerce(float),
@@ -121,21 +90,21 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Optional(const.CONF_HOME_TEMP): vol.Coerce(float),
         vol.Optional(const.CONF_SLEEP_TEMP): vol.Coerce(float),
         vol.Optional(const.CONF_ACTIVITY_TEMP): vol.Coerce(float),
-        vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
-        vol.Optional(CONF_COLD_TOLERANCE, default=DEFAULT_TOLERANCE): vol.Coerce(float),
-        vol.Optional(CONF_HOT_TOLERANCE, default=DEFAULT_TOLERANCE): vol.Coerce(float),
-        vol.Optional(CONF_TARGET_TEMP): vol.Coerce(float),
-        vol.Optional(CONF_KEEP_ALIVE): cv.positive_time_period,
-        vol.Optional(CONF_INITIAL_HVAC_MODE): vol.In(
+        vol.Optional(const.CONF_NAME, default=const.DEFAULT_NAME): cv.string,
+        vol.Optional(const.CONF_COLD_TOLERANCE, default=const.DEFAULT_TOLERANCE): vol.Coerce(float),
+        vol.Optional(const.CONF_HOT_TOLERANCE, default=const.DEFAULT_TOLERANCE): vol.Coerce(float),
+        vol.Optional(const.CONF_TARGET_TEMP): vol.Coerce(float),
+        vol.Optional(const.CONF_KEEP_ALIVE): volAll(cv.positive_time_period, cv.positive_timedelta),
+        vol.Optional(const.CONF_INITIAL_HVAC_MODE): vol.In(
             [HVACMode.COOL, HVACMode.HEAT, HVACMode.OFF]
         ),
-        vol.Optional(CONF_PRECISION): vol.In(
+        vol.Optional(const.CONF_PRECISION): vol.In(
             [PRECISION_TENTHS, PRECISION_HALVES, PRECISION_WHOLE]
         ),
-        vol.Optional(CONF_TEMP_STEP): vol.In(
+        vol.Optional(const.CONF_TEMP_STEP): vol.In(
             [PRECISION_TENTHS, PRECISION_HALVES, PRECISION_WHOLE]
         ),
-        vol.Optional(CONF_UNIQUE_ID): cv.string,
+        vol.Optional(const.CONF_UNIQUE_ID): cv.string,
     }
 ).extend({vol.Optional(v): vol.Coerce(float) for (k, v) in CONF_PRESETS.items()})
 
