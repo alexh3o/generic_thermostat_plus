@@ -38,6 +38,7 @@ from homeassistant.const import (
     SERVICE_TURN_OFF,
     SERVICE_TURN_ON,
     STATE_ON,
+    STATE_OFF,
     STATE_UNAVAILABLE,
     STATE_UNKNOWN,
     UnitOfTemperature,
@@ -51,10 +52,10 @@ from homeassistant.core import (
     callback,
 )
 from homeassistant.exceptions import ConditionError
-from homeassistant.helpers import condition
+from homeassistant.helpers import condition, entity_platform
 import homeassistant.helpers.config_validation as cv
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import (
+    async_track_state_change,
     EventStateChangedData,
     async_track_state_change_event,
     async_track_time_interval,
@@ -62,6 +63,12 @@ from homeassistant.helpers.event import (
 from homeassistant.helpers.reload import async_setup_reload_service
 from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType, EventType
+
+from homeassistant.components.number.const import (
+    ATTR_VALUE,
+    SERVICE_SET_VALUE,
+    DOMAIN as NUMBER_DOMAIN
+)
 
 from . import DOMAIN, PLATFORMS
 from . import const
